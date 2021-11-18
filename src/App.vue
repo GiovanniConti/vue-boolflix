@@ -29,14 +29,14 @@
             v-for="movie in moviesList" :key="movie.id"
           >
             <div class="card">
-              <img :src='posterInitialPath + movie.poster_path' class="card-img-top" alt="...">
-
+              <!-- <img :src='posterInitialPath + movie.poster_path' class="card-img-top" alt="..."> -->
+              <img :src='!movie.poster_path ? "https://img.icons8.com/ios/100/000000/no-image.png" : (posterInitialPath + movie.poster_path)' class="card-img-top" alt="...">
               <div class="card-body">
                 <h2>title: {{movie.title}}</h2>
                 <h3>original title: {{movie.original_title}}</h3>
-                <img v-if="flagsList.hasOwnProperty(movie.original_language)" :src="flagsList[movie.original_language]" :alt="movie.original_language" class="d-inline-block" :title="movie.original_language">
-                <img v-else :src="flagsList.other" :alt="movie.original_language" class="d-inline-block" :title="movie.original_language">
-                <h5>vote: {{movie.vote_average}}</h5>
+                <!-- <img :src="require('@/assets/' + getFlagFromLanguage(movie.original_language) +'.png')" alt="" class="w-25"> -->
+                <img :src="!flagsList[movie.original_language] ? flagsList.other : flagsList[movie.original_language]" :alt="movie.original_language" class="d-inline-block" :title="movie.original_language">
+                <h5>vote: <i v-for="(star, i) in voteToStars(movie.vote_average)" :key="i" :class="star" aria-hidden="true"></i></h5>
               </div>
             </div>
           </div>
@@ -54,9 +54,9 @@
               <div class="card-body">
                 <h2>title: {{tvSerie.name}}</h2>
                 <h3>original title: {{tvSerie.name}}</h3>
-                <img v-if="flagsList.hasOwnProperty(tvSerie.original_language)" :src="flagsList[tvSerie.original_language]" :alt="tvSerie.original_language" class="d-inline-block" :title="tvSerie.original_language">
-                <img v-else :src="flagsList.other" :alt="tvSerie.original_language" class="d-inline-block" :title="tvSerie.original_language">
-                <h5>vote: {{tvSerie.vote_average}}</h5>
+                <img :src="!flagsList[tvSerie.original_language] ? flagsList.other : flagsList[tvSerie.original_language]" :alt="tvSerie.original_language" class="d-inline-block" :title="tvSerie.original_language">
+                <h5>vote: <i v-for="(star, i) in voteToStars(tvSerie.vote_average)" :key="i" :class="star" aria-hidden="true"></i></h5>
+                
               </div>
             </div>
           </div>
@@ -81,6 +81,17 @@ export default {
       moviesList: [],
       seriesList: [],
       searchText: "",
+      // flagsList: [
+      //   'en',
+      //   'it',
+      //   'es',
+      //   'fr',
+      //   'de',
+      //   'pl',
+      //   'ru',
+      //   'ja',
+      //   'other',
+      // ],
       flagsList: {
         en: 'https://img.icons8.com/office/30/000000/great-britain.png',
         it: 'https://img.icons8.com/office/30/000000/italy.png',
@@ -120,13 +131,25 @@ export default {
       this.fetchData('movie', this.searchText)
       this.fetchData('tv', this.searchText)
     },
-    getFlagFromLanguage(lang){
-      if(this.flagsList.includes(lang)){
-        return this.flagsList.lang;
-      } else{
-        return this.flagsList.other;
+    // getFlagFromLanguage(lang){
+    //   if(this.flagsList.includes(lang)){
+    //     return lang;
+    //   } else{
+    //     return 'other';
+    //   }
+    // },
+    voteToStars(vote){
+      let numberOfStars = Math.ceil(vote/2);
+      let starsList= [];
+      while(starsList.length < 5){
+        if(starsList.length < numberOfStars){
+          starsList.push('fa fa-star');
+        } else{
+          starsList.push('fa fa-star-o')
+        }
       }
-    },
+      return starsList
+    }
   },
   mounted() {
     this.fetchData("movie")
