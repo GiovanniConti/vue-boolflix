@@ -1,27 +1,9 @@
 <template>
   <div id="app">
-    <header>
-      <div class="searchBar">
-        <input type="text" placeholder="insert text" class="" v-model="searchText" @keyup.enter="onBtnClick()">
-        <button class="btn btn-primary ms-2"
-          @click="onBtnClick()"
-        >Search</button>
-      </div>
-    </header>
+    <Header
+      @filterSelected = "searchInputText"
+    ></Header>
     <main>
-      <!-- <div class="listContainer d-flex justify-content-center my-5">
-        <ul class="list-group w-50">
-          <li class="list-group-item"
-            v-for="movie in moviesList" :key="movie.id"
-          >
-            title: {{movie.title}} <br>
-            original title: {{movie.original_title}} <br>
-            original language: {{movie.original_language}} <br>
-            vote: {{movie.vote_average}}
-          </li>
-        </ul>
-      </div> -->
-
       <h2 class="mt-5">Movies</h2>
       <div class="container justify-content-center">
         <div class="row row-cols-5  d-flex gy-5">
@@ -68,10 +50,12 @@
 
 <script>
 import  axios from 'axios';
+import Header from './components/Header.vue'
 
 export default {
   name: 'App',
   components: {
+    Header,
   },
   data() {
     return {
@@ -80,18 +64,6 @@ export default {
       listToSearch: "",
       moviesList: [],
       seriesList: [],
-      searchText: "",
-      // flagsList: [
-      //   'en',
-      //   'it',
-      //   'es',
-      //   'fr',
-      //   'de',
-      //   'pl',
-      //   'ru',
-      //   'ja',
-      //   'other',
-      // ],
       flagsList: {
         en: 'https://img.icons8.com/office/30/000000/great-britain.png',
         it: 'https://img.icons8.com/office/30/000000/italy.png',
@@ -104,6 +76,8 @@ export default {
         other: 'https://img.icons8.com/office/30/000000/globe.png'
       },
       posterInitialPath: 'https://image.tmdb.org/t/p/w342/',
+
+    // flagsList: ['en','it','es','fr','de','pl','ru','ja','other'],
     }
   },
   computed: {
@@ -127,9 +101,9 @@ export default {
         }
       });
     },
-    onBtnClick(){
-      this.fetchData('movie', this.searchText)
-      this.fetchData('tv', this.searchText)
+    searchInputText(searchText){
+      this.fetchData('movie', searchText)
+      this.fetchData('tv', searchText)
     },
     // getFlagFromLanguage(lang){
     //   if(this.flagsList.includes(lang)){
