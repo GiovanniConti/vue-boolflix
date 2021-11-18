@@ -1,83 +1,34 @@
 <template>
   <div id="app">
     <Header
-      @filterSelected = "searchInputText"
+      @filterSelected = "searchedQuery"
     ></Header>
-    <main>
-      <h2 class="mt-5">Movies</h2>
-      <div class="container justify-content-center">
-        <div class="row row-cols-5  d-flex gy-5">
-          <div class="col d-flex"
-            v-for="movie in moviesList" :key="movie.id"
-          >
-            <div class="card">
-              <!-- <img :src='posterInitialPath + movie.poster_path' class="card-img-top" alt="..."> -->
-              <img :src='!movie.poster_path ? "https://img.icons8.com/ios/100/000000/no-image.png" : (posterInitialPath + movie.poster_path)' class="card-img-top" alt="...">
-              <div class="card-body">
-                <h2>title: {{movie.title}}</h2>
-                <h3>original title: {{movie.original_title}}</h3>
-                <!-- <img :src="require('@/assets/' + getFlagFromLanguage(movie.original_language) +'.png')" alt="" class="w-25"> -->
-                <img :src="!flagsList[movie.original_language] ? flagsList.other : flagsList[movie.original_language]" :alt="movie.original_language" class="d-inline-block" :title="movie.original_language">
-                <h5>vote: <i v-for="(star, i) in voteToStars(movie.vote_average)" :key="i" :class="star" aria-hidden="true"></i></h5>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <h2 class="mt-5">Tv Shows</h2>
-      <div class="container justify-content-center mb-5">
-        <div class="row row-cols-5  d-flex gy-5">
-          <div class="col d-flex"
-            v-for="tvSerie in seriesList" :key="tvSerie.id"
-          >
-            <div class="card">
-              <img :src='posterInitialPath + tvSerie.poster_path' class="card-img-top" alt="...">
-              <div class="card-body">
-                <h2>title: {{tvSerie.name}}</h2>
-                <h3>original title: {{tvSerie.name}}</h3>
-                <img :src="!flagsList[tvSerie.original_language] ? flagsList.other : flagsList[tvSerie.original_language]" :alt="tvSerie.original_language" class="d-inline-block" :title="tvSerie.original_language">
-                <h5>vote: <i v-for="(star, i) in voteToStars(tvSerie.vote_average)" :key="i" :class="star" aria-hidden="true"></i></h5>
-                
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </main>
+    <Main
+    :movies = 'moviesList'
+    :tvSeries = 'seriesList'
+    ></Main>
   </div>
 </template>
 
 <script>
 import  axios from 'axios';
 import Header from './components/Header.vue'
+import Main from './components/Main.vue'
 
 export default {
   name: 'App',
   components: {
     Header,
+    Main,
   },
   data() {
     return {
       apiUrl: "https://api.themoviedb.org/3/search/",
       apiKey: "44892648a93082408df03e205628971e",
       listToSearch: "",
-      moviesList: [],
-      seriesList: [],
-      flagsList: {
-        en: 'https://img.icons8.com/office/30/000000/great-britain.png',
-        it: 'https://img.icons8.com/office/30/000000/italy.png',
-        es: 'https://img.icons8.com/office/30/000000/spain.png',
-        fr: 'https://img.icons8.com/office/30/000000/france.png',
-        de: 'https://img.icons8.com/office/30/000000/germany.png',
-        pl: 'https://img.icons8.com/office/30/000000/poland.png',
-        ru: 'https://img.icons8.com/office/30/000000/russia-federation.png',
-        ja: 'https://img.icons8.com/office/30/000000/japan.png',
-        other: 'https://img.icons8.com/office/30/000000/globe.png'
-      },
-      posterInitialPath: 'https://image.tmdb.org/t/p/w342/',
-
-    // flagsList: ['en','it','es','fr','de','pl','ru','ja','other'],
+      moviesList: [],       // Array Sent to Main Component
+      seriesList: [],       // Array Sent to Main Component
+   // flagsList: ['en','it','es','fr','de','pl','ru','ja','other'],    USE TO GET FLAGS IMG FROM THE ASSETS
     }
   },
   computed: {
@@ -85,7 +36,6 @@ export default {
   },
   methods: {
     fetchData(searchType, queryText){
-      console.log("fetch called");
       axios.get(this.apiUrl + searchType, {
         params: {
           api_key: this.apiKey,
@@ -101,10 +51,13 @@ export default {
         }
       });
     },
-    searchInputText(searchText){
+
+
+    searchedQuery(searchText){
       this.fetchData('movie', searchText)
       this.fetchData('tv', searchText)
     },
+    /****** FUNCTION TO GET FLAGS IMG FROM THE ASSETS ******/
     // getFlagFromLanguage(lang){
     //   if(this.flagsList.includes(lang)){
     //     return lang;
@@ -112,21 +65,8 @@ export default {
     //     return 'other';
     //   }
     // },
-    voteToStars(vote){
-      let numberOfStars = Math.ceil(vote/2);
-      let starsList= [];
-      while(starsList.length < 5){
-        if(starsList.length < numberOfStars){
-          starsList.push('fa fa-star');
-        } else{
-          starsList.push('fa fa-star-o')
-        }
-      }
-      return starsList
-    }
   },
   mounted() {
-    this.fetchData("movie")
   }
 
 }
