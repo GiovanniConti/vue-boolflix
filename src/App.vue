@@ -1,6 +1,5 @@
 <template>
   <div id="app">
-    <!-- <HelloWorld msg="Welcome to Your Vue.js App"/> -->
     <header>
       <div class="searchBar">
         <input type="text" placeholder="insert text" class="" v-model="searchText" @keyup.enter="onBtnClick()">
@@ -30,13 +29,13 @@
             v-for="movie in moviesList" :key="movie.id"
           >
             <div class="card">
+              <img :src='posterInitialPath + movie.poster_path' class="card-img-top" alt="...">
+
               <div class="card-body">
                 <h2>title: {{movie.title}}</h2>
                 <h3>original title: {{movie.original_title}}</h3>
-                <!-- <img :src="getFlagFromLanguage(movie.original_language)" :alt="movie.original_language"> -->
-                <span class="me-1">{{movie.original_language}}</span>
-                <img v-if="flagsList.hasOwnProperty(movie.original_language)" :src="flagsList[movie.original_language]" :alt="movie.original_language" class="d-inline-block">
-                <img v-else :src="flagsList.other" :alt="movie.original_language" class="d-inline-block">
+                <img v-if="flagsList.hasOwnProperty(movie.original_language)" :src="flagsList[movie.original_language]" :alt="movie.original_language" class="d-inline-block" :title="movie.original_language">
+                <img v-else :src="flagsList.other" :alt="movie.original_language" class="d-inline-block" :title="movie.original_language">
                 <h5>vote: {{movie.vote_average}}</h5>
               </div>
             </div>
@@ -51,12 +50,12 @@
             v-for="tvSerie in seriesList" :key="tvSerie.id"
           >
             <div class="card">
+              <img :src='posterInitialPath + tvSerie.poster_path' class="card-img-top" alt="...">
               <div class="card-body">
                 <h2>title: {{tvSerie.name}}</h2>
                 <h3>original title: {{tvSerie.name}}</h3>
-                <span class="me-1">{{tvSerie.original_language}}</span>
-                <img v-if="flagsList.hasOwnProperty(tvSerie.original_language)" :src="flagsList[tvSerie.original_language]" :alt="tvSerie.original_language" class="d-inline-block">
-                <img v-else :src="flagsList.other" :alt="tvSerie.original_language" class="d-inline-block">
+                <img v-if="flagsList.hasOwnProperty(tvSerie.original_language)" :src="flagsList[tvSerie.original_language]" :alt="tvSerie.original_language" class="d-inline-block" :title="tvSerie.original_language">
+                <img v-else :src="flagsList.other" :alt="tvSerie.original_language" class="d-inline-block" :title="tvSerie.original_language">
                 <h5>vote: {{tvSerie.vote_average}}</h5>
               </div>
             </div>
@@ -68,7 +67,6 @@
 </template>
 
 <script>
-// import HelloWorld from './components/HelloWorld.vue'
 import  axios from 'axios';
 
 export default {
@@ -93,7 +91,8 @@ export default {
         ru: 'https://img.icons8.com/office/30/000000/russia-federation.png',
         ja: 'https://img.icons8.com/office/30/000000/japan.png',
         other: 'https://img.icons8.com/office/30/000000/globe.png'
-      }
+      },
+      posterInitialPath: 'https://image.tmdb.org/t/p/w342/',
     }
   },
   computed: {
